@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "vsv-project-server",
   "version": "0.1.0",
   "description": "Backend for project",
   "main": "index.mjs",
