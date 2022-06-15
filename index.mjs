@@ -15,6 +15,13 @@ app.use(function (req, res, next) {
 const server = createServer(app);
 
 const io = new Server(server)
+const socket = io.of("/wss")
+socket.on("connection", (socket) => {
+  console.log("connected")
+  socket.on("disconnect", () => {
+    console.log("disconnected")
+  })
+})
 
 app.get("/test", (req, res) => {
   res.status(200).send("Hello from server! :)");
