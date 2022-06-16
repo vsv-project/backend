@@ -6,6 +6,8 @@ Website: [vsv.bruh.news](https://vsv.bruh.news)
 
 ## API
 
+(Example)
+
 ```js
 https:api.vsv.bruh.news     // Domain
   /channel                  // Channel
