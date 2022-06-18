@@ -34,9 +34,9 @@ socket_app.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("disconnected");
   })
-  socket.on("signup", (data) => {
-    console.log(data);  // {email, password}
-    const {email, password} = data;
+  socket.on("signup", (credentials) => {
+    console.log(credentials);  // {email, password}
+    const {email, password} = credentials;
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed up successfully. 
@@ -53,9 +53,9 @@ socket_app.on("connection", (socket) => {
       socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
     });
 
-    socket.on("login", (data) => {
-      console.log(data);  // {email, password}
-      const {email, password} = data;
+    socket.on("login", (credentials) => {
+      console.log(credentials);  // {email, password}
+      const {email, password} = credentials;
       signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 
