@@ -62,41 +62,48 @@ socket.on("connection", socket => {
       console.log(errorCode, errorMessage);
       socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
     });
-    socket.on("login", (credentials) => {
-      console.log(credentials);
-      const {email, password} = credentials;
-      signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Sign in sucessful.
-        const user = userCredential.user
-        const status = "success";
-        console.log(user);
-        socket.emit("login", {timestamp: new Date().toUTCString(), status: status, data: {user: user}});
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const status = "failure";
-        console.log(errorCode, errorMessage);
-        socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
-      });
-    })
-    socket.on("signout", () => {
-      signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-        const status = "success";
-        socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {}});
-      })
-      .catch((error) => {
-        console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const status = "failure";
-        socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
-      });
-    })
   });
+  socket.on("login", (credentials) => {
+    console.log(credentials);
+    const {email, password} = credentials;
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Sign in sucessful.
+      const user = userCredential.user
+      const status = "success";
+      console.log(user);
+      socket.emit("login", {timestamp: new Date().toUTCString(), status: status, data: {user: user}});
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const status = "failure";
+      console.log(errorCode, errorMessage);
+      socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
+    });
+  })
+  socket.on("signout", () => {
+    signOut(auth)
+    .then(() => {
+      // Sign-out successful.
+      const status = "success";
+      socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {}});
+    })
+    .catch((error) => {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const status = "failure";
+      socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
+    });
+  })
+  
+  // Initialise Chat listeners
+  // * message: {message: message, user: user, timestamp: timestamp}
+  // * status: "success" | "failure"
+  // * user: {uid: uid, displayName: displayName, email: email}
+  // * channel: {id: id, members: [user, user, ...], messages: [message, message, ...]}
+  // * data: {messages: [message, message, ...], amount: amount} | {error: {errorCode: errorMessage}} | {channels: [channel, channel, ...]}
 });
 
 // Test message for root
