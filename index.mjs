@@ -7,7 +7,7 @@ import "dotenv/config";
 // Start express
 const PORT = process.env.PORT || 3001;
 const app = express();
-console.log(process.env.FIREBASE_CONFIG)
+console.log(typeof process.env.FIREBASE_CONFIG)
 //const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBDK0n1WIWcU6h-_OrmtqvAY1acBRS7fHg",
