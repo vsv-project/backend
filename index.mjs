@@ -3,7 +3,8 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-
+import "dotenv/config";
+console.log(process.env)
 // Start express
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -15,8 +16,8 @@ const firebaseConfig = {
   messagingSenderId: "319826122916",
   appId: "1:319826122916:web:44bf4e1bc13acdc8b4ae31"
 };
-console.log(process.env.FIREBASE_CONFIG);
-const CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
+//console.log(process.env.FIREBASE_CONFIG);
+//const CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
 
 const firebase = initializeApp(firebaseConfig)
 const auth = getAuth(firebase)
