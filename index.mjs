@@ -7,9 +7,16 @@ import "dotenv/config";
 // Start express
 const PORT = process.env.PORT || 3001;
 const app = express();
-
-const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
-
+console.log(process.env.FIREBASE_CONFIG)
+//const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBDK0n1WIWcU6h-_OrmtqvAY1acBRS7fHg",
+  authDomain: "clompass-chat-app.firebaseapp.com",
+  projectId: "clompass-chat-app",
+  storageBucket: "clompass-chat-app.appspot.com",
+  messagingSenderId: "319826122916",
+  appId: "1:319826122916:web:44bf4e1bc13acdc8b4ae31"
+};
 const firebase = initializeApp(FIREBASE_CONFIG)
 const auth = getAuth(firebase)
 
