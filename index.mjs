@@ -7,9 +7,18 @@ import { initializeApp } from "firebase/app";
 // Start express
 const PORT = process.env.PORT || 3001;
 const app = express();
-const CONFIG = JSON.parse(process.env.CONFIG) 
+const firebaseConfig = {
+  apiKey: "AIzaSyBDK0n1WIWcU6h-_OrmtqvAY1acBRS7fHg",
+  authDomain: "clompass-chat-app.firebaseapp.com",
+  projectId: "clompass-chat-app",
+  storageBucket: "clompass-chat-app.appspot.com",
+  messagingSenderId: "319826122916",
+  appId: "1:319826122916:web:44bf4e1bc13acdc8b4ae31"
+};
+console.log(process.env.CONFIG);
+const CONFIG = JSON.parse(process.env.CONFIG) ;
 
-const firebase = initializeApp(CONFIG)
+const firebase = initializeApp(firebaseConfig)
 const auth = getAuth(firebase)
 
 // Allow CORS
@@ -20,6 +29,7 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept",
   );
+  console.log(res.getHeaders())
   next();
 });
 
