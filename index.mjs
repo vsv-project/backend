@@ -15,8 +15,8 @@ const firebaseConfig = {
   messagingSenderId: "319826122916",
   appId: "1:319826122916:web:44bf4e1bc13acdc8b4ae31"
 };
-console.log(process.env.CONFIG);
-const CONFIG = JSON.parse(process.env.CONFIG) ;
+console.log(process.env.FIREBASE_CONFIG);
+const CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
 
 const firebase = initializeApp(firebaseConfig)
 const auth = getAuth(firebase)
