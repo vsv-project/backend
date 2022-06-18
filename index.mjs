@@ -4,13 +4,17 @@ import { Server } from "socket.io";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import "dotenv/config";
+
 // Start express
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG) ;
-const firebase = initializeApp(FIREBASE_CONFIG)
-const auth = getAuth(firebase)
+// Get the Firebase config from the .env file
+const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG);
+
+// Setup Firebase app instance
+const firebase = initializeApp(FIREBASE_CONFIG) // Initalise Firebase
+const auth = getAuth(firebase) // Get the auth object from Firebase
 
 // Allow CORS
 //! Change to strict domain
@@ -27,17 +31,25 @@ app.use(function (req, res, next) {
 const server = createServer(app); // Create `http` server
 const io = new Server(server); // Create socket from server
 const socket = io.of("/wss"); // Namespace must be 'wss'
+
+// Initialise listeners
 socket.on("connection", socket => {
   console.log("connected");
   socket.on("disconnect", () => {
     console.log("disconnected");
   });
+  
+  // Initialise Auth listeners
+  // * credentials: {email, password}
+  // * status: "success" | "failure"
+  // * data: {user: user} | {error: {errorCode: errorMessage}} | {signedOut: true}
+
   socket.on("signup", (credentials) => {
-    console.log(credentials);  // {email, password}
+    console.log(credentials); 
     const {email, password} = credentials;
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      // Signed up successfully. 
+      // Sign up successful. 
       const user = userCredential.user
       const status = "success"
       console.log(user)
@@ -51,11 +63,11 @@ socket.on("connection", socket => {
       socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
     });
     socket.on("login", (credentials) => {
-      console.log(credentials);  // {email, password}
+      console.log(credentials);
       const {email, password} = credentials;
       signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in 
+        // Sign in sucessful.
         const user = userCredential.user
         const status = "success";
         console.log(user);
@@ -92,7 +104,7 @@ app.get("/", (req, res) => {
   res.status(200).send("Hello from server! :)");
 });
 
-// Wildcard > 404
+// Wildcard => 404
 app.get("*", (req, res) => {
   res.status(404).send("Not found.");
 });
