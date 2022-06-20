@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get, DataSnapshot } from "firebase/database";
+import { getDatabase, ref, get, DataSnapshot, onValue } from "firebase/database";
 import "dotenv/config";
 
 // Start express
@@ -20,7 +20,7 @@ const config = JSON.parse(FIREBASE_CONFIG)
 // Setup Firebase app instance
 const firebase = initializeApp(config) // Initalise Firebase
 const auth = getAuth(firebase) // Get the auth object from Firebase
-const database = getDatabase(firebase)
+const database = getDatabase(firebase, "https://clompass-chat-app-default-rtdb.asia-southeast1.firebasedatabase.app/")
 const channelsRef = ref(database, "channels");
 
 // Allow CORS
@@ -78,7 +78,7 @@ socket.on("connection", socket => {
       // Sign in sucessful.
       const user = userCredential.user
       const status = "success";
-      console.log(user);
+      console.log("user:", user);
       socket.emit("login", {timestamp: new Date().toUTCString(), status: status, data: {user: user}});
     })
     .catch((error) => {
@@ -113,8 +113,14 @@ socket.on("connection", socket => {
   // * data: {messages: [message, message, ...], amount: amount} | {error: {errorCode: errorCode, errorMessage: errorMessage}} | {channels: [channel, channel, ...]}
 
   socket.on("getChannels", () => {
+    onValue(channelsRef, (snapshot) => {
+      const channels = snapshot.val()
+      const status = "success";
+      socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: status, data: {channels: channels}});
+    })
     get(channelsRef)
       .then((snapshot) => {
+        console.log(snapshot)
         if (snapshot.exists()) {
           console.log(snapshot.val());
           socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "success", data: {channels: snapshot.val()}});
@@ -125,7 +131,7 @@ socket.on("connection", socket => {
       })
       .catch((error) => {
         console.error(error);
-        socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: ["None", "Unable to get data"]}});
+        socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: [error.code, error.message]}});
       });
     })
 });
