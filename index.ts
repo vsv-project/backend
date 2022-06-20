@@ -10,10 +10,14 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 // Get the Firebase config from the .env file
-const FIREBASE_CONFIG = JSON.parse(process.env.FIREBASE_CONFIG);
+const FIREBASE_CONFIG = process.env.FIREBASE_CONFIG
+if (!FIREBASE_CONFIG) {
+    throw new Error("FIREBASE_CONFIG is not set");
+}
+const config = JSON.parse(FIREBASE_CONFIG)
 
 // Setup Firebase app instance
-const firebase = initializeApp(FIREBASE_CONFIG) // Initalise Firebase
+const firebase = initializeApp(config) // Initalise Firebase
 const auth = getAuth(firebase) // Get the auth object from Firebase
 
 // Allow CORS

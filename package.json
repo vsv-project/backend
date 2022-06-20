@@ -4,7 +4,8 @@
   "description": "Backend for project",
   "main": "index.mjs",
   "scripts": {
-    "start": "node index.mjs"
+    "start": "ts-node index.ts",
+    "dev": "nodemon -x ts-node index.ts"
   },
   "repository": {
     "type": "git",
