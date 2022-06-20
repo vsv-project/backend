@@ -120,12 +120,12 @@ socket.on("connection", socket => {
           socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "success", data: {channels: snapshot.val()}});
         } else {
           console.log("No data available");
-          socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: {errorCode: "None", errorMessage: "No data available"}}});
+          socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: [ "None", "No data available"]}});
         }
       })
       .catch((error) => {
         console.error(error);
-        socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: {errorCode: "None", errorMessage: "Unable to get data"}}});
+        socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: ["None", "Unable to get data"]}});
       });
     })
 });
