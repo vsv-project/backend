@@ -94,7 +94,7 @@ socket.on("connection", socket => {
     .then(() => {
       // Sign-out successful.
       const status = "success";
-      socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {}});
+      socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {user: null}});
     })
     .catch((error) => {
       console.log(error);
