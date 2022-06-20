@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, } from "firebase/auth";
 import { initializeApp } from "firebase/app";
+import { getDatabase, ref, get, DataSnapshot } from "firebase/database";
 import "dotenv/config";
 
 // Start express
@@ -19,6 +20,8 @@ const config = JSON.parse(FIREBASE_CONFIG)
 // Setup Firebase app instance
 const firebase = initializeApp(config) // Initalise Firebase
 const auth = getAuth(firebase) // Get the auth object from Firebase
+const database = getDatabase(firebase)
+const channelsRef = ref(database, "channels");
 
 // Allow CORS
 //! Change to strict domain
@@ -46,7 +49,7 @@ socket.on("connection", socket => {
   // Initialise Auth listeners
   // * credentials: {email, password}
   // * status: "success" | "failure"
-  // * data: {user: user} | {error: {errorCode: errorMessage}} | {signedOut: true}
+  // * data: {user: user} | {error: {errorCode: errorCode, errorMessage: errorMessage}} | {signedOut: true}
 
   socket.on("signup", (credentials) => {
     console.log(credentials); 
@@ -64,7 +67,7 @@ socket.on("connection", socket => {
       const errorMessage = error.message;
       const status = "failure"
       console.log(errorCode, errorMessage);
-      socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
+      socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorCode, errorMessage: errorMessage}}});
     });
   });
   socket.on("login", (credentials) => {
@@ -83,7 +86,7 @@ socket.on("connection", socket => {
       const errorMessage = error.message;
       const status = "failure";
       console.log(errorCode, errorMessage);
-      socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
+      socket.emit("signup", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorCode, errorMessage: errorMessage}}});
     });
   })
   socket.on("signout", () => {
@@ -98,7 +101,7 @@ socket.on("connection", socket => {
       const errorCode = error.code;
       const errorMessage = error.message;
       const status = "failure";
-      socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorMessage}}});
+      socket.emit("signout", {timestamp: new Date().toUTCString(), status: status, data: {error: {errorCode: errorCode, errorMessage: errorMessage}}});
     });
   })
   
@@ -107,7 +110,24 @@ socket.on("connection", socket => {
   // * status: "success" | "failure"
   // * user: {uid: uid, displayName: displayName, email: email}
   // * channel: {id: id, members: [user, user, ...], messages: [message, message, ...]}
-  // * data: {messages: [message, message, ...], amount: amount} | {error: {errorCode: errorMessage}} | {channels: [channel, channel, ...]}
+  // * data: {messages: [message, message, ...], amount: amount} | {error: {errorCode: errorCode, errorMessage: errorMessage}} | {channels: [channel, channel, ...]}
+
+  socket.on("getChannels", () => {
+    get(channelsRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "success", data: {channels: snapshot.val()}});
+        } else {
+          console.log("No data available");
+          socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: {errorCode: "None", errorMessage: "No data available"}}});
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        socket.emit("getChannels", {timestamp: new Date().toUTCString(), status: "failure", data: {error: {errorCode: "None", errorMessage: "Unable to get data"}}});
+      });
+    })
 });
 
 // Test message for root
