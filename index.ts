@@ -20,8 +20,8 @@ const config = JSON.parse(FIREBASE_CONFIG)
 // Setup Firebase app instance
 const firebase = initializeApp(config) // Initalise Firebase
 const auth = getAuth(firebase) // Get the auth object from Firebase
-const database = getDatabase(firebase, "https://clompass-chat-app-default-rtdb.asia-southeast1.firebasedatabase.app/")
-const channelsRef = ref(database, "channels");
+//const database = getDatabase(firebase)
+//const channelsRef = ref(database, "channels");
 
 // Allow CORS
 //! Change to strict domain
@@ -113,6 +113,7 @@ socket.on("connection", socket => {
   // * data: {messages: [message, message, ...], amount: amount} | {error: {errorCode: errorCode, errorMessage: errorMessage}} | {channels: [channel, channel, ...]}
 
   socket.on("getChannels", () => {
+    const channelsRef = ref(getDatabase(firebase), "channels");
     onValue(channelsRef, (snapshot) => {
       const channels = snapshot.val()
       const status = "success";
